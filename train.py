@@ -2,14 +2,11 @@ import re
 import random
 from collections import defaultdict
 import os
+with open(os.path.join('data', 'tolstoy.txt')) as f:
+    text = f.read().lower()
 
 
 input_dir = input('Введите слово для начала текста, если такого нет, нажмите Enter: ')
-if input_dir == '':
-    with open(os.path.join('data', 'tolstoy.txt')) as f:
-        text = f.read().lower()
-else:
-    input_dir = input_dir
 
 
 def tokenize(text):
@@ -42,14 +39,6 @@ def predict(chain, transit):
     return random.choice(nextie) if nextie else ''
 
 
-def generate_chain(start_text, transitions):
-    chain = create_chain()
-
-    while True:
-        state = predict(chain, transitions)
-        yield state
-        chain.append(state)
-
 def start():
     if input_dir == '':
         while True:
@@ -62,9 +51,25 @@ def start():
 
 
 starting = start()
-generator = generate_chain(starting, transits)
 
 
 def create_chain():
     head = starting
     return tokenize(head)
+
+
+def generate_chain(start_text, transitions):
+    chain = [start_text]
+    counter = 0
+    while True:
+        if counter != 0:
+            state = predict(chain, transitions)
+            yield state
+            chain.append(state)
+        else:
+            counter += 1
+            yield chain[0]
+            chain.append(start_text)
+
+
+generator = generate_chain(starting, transits)
