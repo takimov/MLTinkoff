@@ -2,7 +2,20 @@ import re
 import random
 from collections import defaultdict
 import os
-with open(os.path.join('data', 'tolstoy.txt')) as f:
+
+list_files = dict()
+for files in os.listdir('data'):
+    list_files.update({os.listdir('data').index(files): files})
+
+
+for i in list_files:
+    print(i, ' - ', list_files[i])
+
+
+file = int(input('Выберите файл для генерации(укажите порядковый номер): '))
+
+
+with open(os.path.join('data', list_files[file])) as f:
     text = f.read().lower()
 
 
