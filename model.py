@@ -2,7 +2,6 @@
 import os
 from generate import result
 
-
 with open('result.txt', 'w') as out:
     for i in result:
         out.write(i)
