@@ -21,19 +21,20 @@ with open(os.path.join('data', list_files[file])) as f:
 
 input_dir = input('Введите слово для начала текста, если такого нет, нажмите Enter: ')
 
-
+#Возвращает исходный текст в виде списка, разбитого на слова и пунктуацию, как отдельные элементы.
 def tokenize(text):
     return re.findall(r"[\w']+|[.,!?;]",  text)
 
 
 corpus = tokenize(text)
 
-
+#Разбивает на подсписки длиной size, состоящие из элементов tokenize(text).
 def slicing(corpus, size):
     samples = (corpus[idx: idx + size] for idx, _ in enumerate(corpus))
     return [s for s in samples if len(s) == size]
 
-
+#Создает defaultdict с классом list,
+# состоящий из ключей - слов текста; значений - всех слов, стоящих после этого слова(ключа) в тексте.
 def transitions(samples):
     transit = defaultdict(list)
     for sample in samples:
@@ -45,13 +46,15 @@ def transitions(samples):
 samples = slicing(corpus, size=3)
 transits = transitions(samples)
 
-
+#Создает цепь, в которой берется последнее слово цепи,
+# а за ним "наугад" создается следующее слово из списка слов, вызванных transit[last].
 def predict(chain, transit):
     last = chain[-1]
     nextie = transit[last]
     return random.choice(nextie) if nextie else ''
 
-
+#Возвращает input_dir, как стартовое слово, если оно было введено,
+# если нет, то выбирает "наугад" элемент из списка, если элемент не является знаком препинания.
 def start():
     if input_dir == '':
         while True:
@@ -65,12 +68,7 @@ def start():
 
 starting = start()
 
-
-def create_chain():
-    head = starting
-    return tokenize(head)
-
-
+#Генерация готовой цепи.(Функция генератор)
 def generate_chain(start_text, transitions):
     chain = [start_text]
     counter = 0
